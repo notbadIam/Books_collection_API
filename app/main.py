@@ -6,7 +6,7 @@ from pydantic import BaseModel, fields
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 from Database import SessionLocal, insert, see_table, update_prices
-from Practice6 import *
+from Tokens import *
 from fastapi import Depends
 
 app = FastAPI()
