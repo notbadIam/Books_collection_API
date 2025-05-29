@@ -5,8 +5,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel, fields
 from sqlalchemy import text
 from sqlalchemy.orm import Session
-from modeldb import SessionLocal, insert, see_table, update_prices
-from Tokens import *
+from app.modeldb import SessionLocal, insert, see_table, update_prices
+from app.Tokens import *
 from fastapi import Depends
 
 app = FastAPI()
