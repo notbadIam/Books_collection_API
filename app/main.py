@@ -112,6 +112,13 @@ def get_users(db: Session = Depends(get_db),
 
 
 
+@app.get('/username')                                        #Complete
+def get_username(token: str = Depends(verify_token)):
+    return {"username": token}
+
+
+
+
 @app.post("/books")                                           #Complete
 def create_book(book: Books,
                 db: Session = Depends(get_db),
