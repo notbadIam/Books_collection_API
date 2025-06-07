@@ -117,7 +117,7 @@ def get_username(token: str = Depends(verify_token),
                  db:Session = Depends(get_db)):
     query = text("SELECT username FROM users WHERE username = :token")
     name = db.execute(query, { 'token' : token}).mappings().all()
-    return {"Name": name[0]['username']}
+    return {"Name": name[0]['name']}
 
 
 
