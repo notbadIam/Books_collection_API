@@ -177,6 +177,17 @@ def Show_books_by_author(author:str,
         return books
 
 
+@app.get("/books/by_title")
+def Show_books_by_title(title:str,
+                         db: Session = Depends(get_db)):
+    query = (text("SELECT title, author, year, price FROM Books WHERE title = :title"))
+    books = db.execute(query, {"title": title}).mappings().all()
+    if not books:
+        return {"Detail":f"No books found by title name {title}"}
+    else:
+        return books
+
+
 
 
 @app.post("/reviews")                                   #Complete
