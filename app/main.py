@@ -162,7 +162,7 @@ def reset_books(token = Depends(oauth2_scheme),
 def Show_books(db: Session = Depends(get_db)):
     books = db.execute(text("SELECT title, author, year, price FROM Books")).mappings().all()
     if not books:
-        raise HTTPException(status_code=404, detail="Book not found")
+        raise HTTPException(status_code=404, detail="Books not found")
     return books
 
 
@@ -172,7 +172,7 @@ def Show_books_by_author(author:str,
     query = (text("SELECT title, year, price FROM Books WHERE author = :author"))
     books = db.execute(query, {"author": author}).mappings().all()
     if not books:
-        return {"Detail":f"No books found by author {author}"}
+        raise HTTPException(status_code=404, detail="Book not found")
     else:
         return books
 
@@ -183,7 +183,7 @@ def Show_books_by_title(title:str,
     query = (text("SELECT title, author, year, price FROM Books WHERE title = :title"))
     books = db.execute(query, {"title": title}).mappings().all()
     if not books:
-        return {"Detail":f"No books found by title name {title}"}
+        raise HTTPException(status_code=404, detail="Book not found")
     else:
         return books
 
