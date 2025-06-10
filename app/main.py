@@ -169,7 +169,7 @@ def Show_books(db: Session = Depends(get_db)):
 @app.get("/books/by_author")                                #Complete
 def Show_books_by_author(author:str,
                          db: Session = Depends(get_db)):
-    query = (text("SELECT title, year, price FROM Books WHERE author = :author"))
+    query = (text("SELECT title, author FROM Books WHERE author = :author"))
     books = db.execute(query, {"author": author}).mappings().all()
     if not books:
         raise HTTPException(status_code=404, detail="Book not found")
@@ -180,7 +180,7 @@ def Show_books_by_author(author:str,
 @app.get("/books/by_title")
 def Show_books_by_title(title:str,
                          db: Session = Depends(get_db)):
-    query = (text("SELECT title, author, year, price FROM Books WHERE title = :title"))
+    query = (text("SELECT title, author FROM Books WHERE title = :title"))
     books = db.execute(query, {"title": title}).mappings().all()
     if not books:
         raise HTTPException(status_code=404, detail="Book not found")
