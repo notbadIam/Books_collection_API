@@ -192,38 +192,43 @@ def Show_books_by_title(title:str,
 
 
 
-@app.post("/reviews")                                   #Complete
+@app.post("/reviews")
 def add_review(review: Review,
                token = Depends(oauth2_scheme),
-               db:Session = Depends(get_db)):
-    query = (text("SELECT * FROM Book_Reviews WHERE username = :username"))
-    param = {"username": verify_token(token)}
-    try:
-        reviews = db.execute(query, param).mappings().all()
-    except:
-        raise HTTPException(status_code=404, detail="Review not found")
-    for j in reviews:
-        username = verify_token(token)
-        if j['username'] == username:
-            if j['title'] == review.title:
-                raise HTTPException(status_code=400, detail="Review already exists")
-            else:
-                pass
-    books_s = db.execute(text("SELECT * FROM Books")).mappings().all()
-    for i in books_s:
-        if review.title.strip().lower() == i['title'].strip().lower():
-            sql = text(
-                "INSERT INTO Book_Reviews (title, username, review, rating) VALUES (:title, :username, :review, :rating)"
-            )
-            parameter = {"title": review.title,
-                       "username": verify_token(token),
-                       "review": review.review,
-                       "rating": review.rating
-                       }
-            db.execute(sql, parameter)
-            db.commit()
-            return {"status" : f"The Review is Added by {verify_token(token)}"}
-    raise HTTPException(status_code=404, detail="Book not Available")
+               db: Session = Depends(get_db)):
+    
+    username = verify_token(token)
+
+    # ✅ 1. Check if the user already submitted a review for this title
+    check_query = text("SELECT * FROM Book_Reviews WHERE username = :username AND title = :title")
+    params = {"username": username, "title": review.title}
+    existing = db.execute(check_query, params).fetchone()
+
+    if existing:
+        raise HTTPException(status_code=400, detail="Review already exists")
+
+    # ✅ 2. Check if the book exists
+    book_query = text("SELECT * FROM Books WHERE LOWER(TRIM(title)) = :title")
+    book = db.execute(book_query, {"title": review.title.strip().lower()}).fetchone()
+
+    if not book:
+        raise HTTPException(status_code=404, detail="Book not Available")
+
+    # ✅ 3. Insert review
+    insert_sql = text("""
+        INSERT INTO Book_Reviews (title, username, review, rating)
+        VALUES (:title, :username, :review, :rating)
+    """)
+    params = {
+        "title": review.title,
+        "username": username,
+        "review": review.review,
+        "rating": review.rating
+    }
+    db.execute(insert_sql, params)
+    db.commit()
+
+    return {"status": f"The Review is Added by {username}"}
 
 
 @app.get("/reviews/view")                                   #Complete
