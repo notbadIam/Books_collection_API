@@ -13,7 +13,7 @@ This is a backend RESTful API for managing a personal book collection. It suppor
 ## Tech Stack
 
 - *Framework:* FastAPI
-- *Database:* SQLite or PostgreSQL
+- *Database:*  PostgreSQL
 - *ORM:* SQLAlchemy
 - *Authentication:* JWT (JSON Web Tokens)
 - *Validation:* Pydantic
